@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROCK-PAPER-SCISSOR GAME USING DOM</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-color: #2c3e50;
+            background-image: linear-gradient(45deg, #3498db, #2ecc71);
+            background-size: cover;
+            background-position: center;
+            color: #ecf0f1;
+        }
+
+        .game-container {
+            margin-top: 50px;
+            background-color: rgba(44, 62, 80, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s;
+        }
+
+        h1 {
+            color: #e74c3c;
+            animation: colorChange 2s infinite;
+            text-shadow: 2px 2px #34495e;
+        }
+
+        .choice-button {
+            font-size: 2rem;
+            padding: 20px;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            transition: transform 0.3s, background-color 0.3s;
+            border-radius: 50%;
+        }
+
+        .choice-button:hover {
+            transform: scale(1.1);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .choice-button img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .results, .score {
+            margin-top: 20px;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+            color: #bdc3c7;
+        }
+
+        .results p, .score p {
+            margin: 5px 0;
+        }
+
+        .reset-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .reset-button:hover {
+            background-color: #c0392b;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes colorChange {
+            0% { color: #e74c3c; }
+            50% { color: #c0392b; }
+            100% { color: #e74c3c; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>ROCKS_PAPERS_SCISSORS GAME</h1>
+        <div class="choices">
+            <button id="rock" class="choice-button">
+                <img src="Rock.png" alt="Rock">
+            </button>
+            <button id="paper" class="choice-button">
+                <img src="Paper.jpg" alt="Paper">
+            </button>
+            <button id="scissors" class="choice-button">
+                <img src="Scissor.jpg" alt="Scissors">
+            </button>
+        </div>
+        <div class="results">
+            <p id="player-choice">Ramon choose: </p>
+            <p id="computer-choice">Computer choose: </p>
+            <p id="result">Result: </p>
+        </div>
+        <div class="score">
+            <p id="player-score">Your score: 0</p>
+            <p id="computer-score">Computer's score: 0</p>
+        </div>
+        <button id="reset" class="reset-button">Reset</button>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const choices = ['rock', 'paper', 'scissors'];
+            const choiceButtons = document.querySelectorAll('.choice-button');
+            const playerChoiceDisplay = document.getElementById('player-choice');
+            const computerChoiceDisplay = document.getElementById('computer-choice');
+            const resultDisplay = document.getElementById('result');
+            const playerScoreDisplay = document.getElementById('player-score');
+            const computerScoreDisplay = document.getElementById('computer-score');
+            const resetButton = document.getElementById('reset');
+            
+            let playerScore = 0;
+            let computerScore = 0;
+
+            choiceButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const playerChoice = button.id;
+                    const computerChoice = choices[Math.floor(Math.random() * choices.length)];
+                    const result = determineWinner(playerChoice, computerChoice);
+
+                    playerChoiceDisplay.textContent = `You chose: ${getEmoji(playerChoice)}`;
+                    computerChoiceDisplay.textContent = `Computer chose: ${getEmoji(computerChoice)}`;
+                    resultDisplay.textContent = `Result: ${result}`;
+
+                    if (result === "You win!") {
+                        playerScore++;
+                        resultDisplay.style.backgroundColor = 'rgba(144, 238, 144, 0.3)';
+                    } else if (result === "Computer wins!") {
+                        computerScore++;
+                        resultDisplay.style.backgroundColor = 'rgba(255, 182, 193, 0.3)';
+                    } else {
+                        resultDisplay.style.backgroundColor = 'rgba(255, 255, 224, 0.3)';
+                    }
+
+                    playerScoreDisplay.textContent = `Your score: ${playerScore}`;
+                    computerScoreDisplay.textContent = `Computer's score: ${computerScore}`;
+                });
+            });
+
+            resetButton.addEventListener('click', () => {
+                playerChoiceDisplay.textContent = 'You chose: ';
+                computerChoiceDisplay.textContent = 'Computer chose: ';
+                resultDisplay.textContent = 'Result: ';
+                resultDisplay.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
+                playerScore = 0;
+                computerScore = 0;
+                playerScoreDisplay.textContent = 'Your score: 0';
+                computerScoreDisplay.textContent = 'Computer\'s score: 0';
+            });
+
+            function determineWinner(player, computer) {
+                if (player === computer) {
+                    return "It's a tie!";
+                } else if (
+                    (player === 'rock' && computer === 'scissors') ||
+                    (player === 'paper' && computer === 'rock') ||
+                    (player === 'scissors' && computer === 'paper')
+                ) {
+                    return "You win!";
+                } else {
+                    return "Computer wins!";
+                }
+            }
+
+            function getEmoji(choice) {
+                if (choice === 'rock') return '🪨';
+                if (choice === 'paper') return '📄';
+                if (choice === 'scissors') return '✂️';
+            }
+        });
+    </script>
+</body>
+</html>
